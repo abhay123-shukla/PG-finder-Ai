@@ -8,6 +8,8 @@ backed by SQLite and SQLAlchemy.
 
 from contextlib import asynccontextmanager
 import os
+from pathlib import Path
+import sys
 from typing import Any, Dict, List
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request, status
@@ -15,6 +17,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
+
+# Ensure backend root directory is in sys.path
+backend_dir = str(Path(__file__).resolve().parent.parent)
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
 # Load environment configuration (.env)
 load_dotenv()
