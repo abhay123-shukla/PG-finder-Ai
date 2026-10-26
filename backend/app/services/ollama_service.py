@@ -65,14 +65,17 @@ class OllamaService:
             or "llama3.2:3b"
         )
 
-    def _get_client(self) -> Any:
-        """Instantiates or validates the Ollama client."""
+    def _get_client(self, timeout: float = 30.0) -> Any:
+        """Instantiates or validates the Ollama client with a configurable network timeout."""
         if Client is None:
             raise OllamaServiceError(
                 "The official 'ollama' Python library is not installed. "
                 "Install it with 'pip install ollama'."
             )
-        return Client(host=self.host)
+        try:
+            return Client(host=self.host, timeout=timeout)
+        except TypeError:
+            return Client(host=self.host)
 
     def chat(
         self,
@@ -174,7 +177,7 @@ class OllamaService:
             Dict containing connection status, model verification, and model list.
         """
         try:
-            client = self._get_client()
+            client = self._get_client(timeout=3.0)
             models_data = client.list()
 
             # Handle both object attributes and dict responses
